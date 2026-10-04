@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Repo-wide pre-commit dispatcher. Runs per-config checks only when that
+# config has staged changes.
+# Enable once per clone with:  git config core.hooksPath .githooks
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+if [[ -n "$(git diff --cached --name-only -- .config/nvim/)" ]]; then
+  "$REPO_ROOT/.config/nvim/.githooks/pre-commit"
+fi

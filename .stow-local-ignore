@@ -1,0 +1,10 @@
+# Repo-only files that must not be linked into $HOME.
+# Patterns are Perl regexes. A leading / anchors them to the repo root,
+# so files with the same name inside packages (e.g. .config/nvim/.gitignore) stay linked.
+^/\.git$
+^/\.gitignore$
+^/\.githooks$
+^/\.stow-local-ignore$
+^/README.*
+^/CLAUDE\.md$
+^/LICENSE.*

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Runs headless nvim checks. Invoked by the repo-root .githooks/pre-commit
+# when files under .config/nvim/ are staged; can also be run directly.
+set -euo pipefail
+
+# Resolve the nvim config dir from this script's location, not the git
+# toplevel (which is the dotfiles repo root).
+NVIM_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$NVIM_DIR"
+
+scripts/smoke-test.sh
+
+nvim --headless \
+  -c "Lazy load plenary.nvim" \
+  -c "PlenaryBustedDirectory tests/ {sequential = true}" \
+  -c "qa!"
