@@ -1,0 +1,3 @@
+# oh-my-zsh itself is not tracked, only its custom/ dir
+/.oh-my-zsh/*
+!/.oh-my-zsh/custom
