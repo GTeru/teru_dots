@@ -26,11 +26,13 @@ Files that only belong to the repo (`README.md`, `CLAUDE.md`, `LICENSE`, `.githo
 
 ```sh
 # Omarchy / Arch
-sudo pacman -S git stow zsh eza
+sudo pacman -S git stow zsh eza starship
 
 # macOS
-brew install git stow zsh eza
+brew install git stow zsh eza starship
 ```
+
+Starship is the prompt (config in `.config/starship.toml`). On other Linux distros: `curl -sS https://starship.rs/install.sh | sh`
 
 Install [oh-my-zsh](https://ohmyz.sh/#install) first. This repo only provides its `custom/` folder.
 
