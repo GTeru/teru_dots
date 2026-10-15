@@ -108,7 +108,22 @@ Verify:
 claude --version
 ```
 
-### 4. First launch
+### 4. Jupytext CLI
+
+Used by [`GCBallesteros/jupytext.nvim`](https://github.com/GCBallesteros/jupytext.nvim) (`lua/plugins/jupytext.lua`). It opens `.ipynb` files as plain `# %%` text and converts back to JSON on save. The plugin shells out to the `jupytext` CLI, so it must be on `PATH`:
+
+```sh
+pipx install jupytext
+# or: uv tool install jupytext
+```
+
+Verify:
+
+```sh
+jupytext --version
+```
+
+### 5. First launch
 
 This config is part of the `teru_dots` repo and is linked into `~/.config/nvim` with GNU Stow. See the [root README](../../README.md) for clone and stow steps. Then:
 
