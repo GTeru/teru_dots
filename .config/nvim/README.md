@@ -5,7 +5,7 @@ Refer to the [documentation](https://lazyvim.github.io/installation) to get star
 
 ## Setup
 
-Steps to get this configuration working on **macOS** and **Omarchy** (Arch Linux).
+Steps to get this configuration working on **macOS** and **Arch Linux**.
 
 ### 1. Core dependencies
 
@@ -32,13 +32,13 @@ brew install --cask font-fira-code-nerd-font
 
 Clipboard works out of the box (`pbcopy`/`pbpaste`).
 
-#### Omarchy (Arch Linux)
+#### Arch Linux
 
 ```sh
 sudo pacman -S neovim git ripgrep fd lazygit base-devel unzip curl wget wl-clipboard
 ```
 
-`base-devel` covers `gcc` + `make`. `wl-clipboard` = Wayland clipboard (Omarchy default). On X11 use `xclip` or `xsel` instead.
+`base-devel` covers `gcc` + `make`. `wl-clipboard` = Wayland clipboard (for Hyprland). On X11 use `xclip` or `xsel` instead.
 
 FiraCode Nerd Font:
 
@@ -62,7 +62,7 @@ Then set your terminal font to **FiraCode Nerd Font**.
 brew install mise
 ```
 
-**Omarchy:**
+**Arch:**
 
 ```sh
 yay -S mise

@@ -1,13 +1,5 @@
 local M = {}
 
-local light_theme_patterns = {
-  "latte",
-  "light",
-  "dawn",
-  "day",
-  "gruvbox%-light",
-}
-
 local state = {
   scheme = nil,
   timer = nil,
@@ -20,33 +12,11 @@ function M.detect()
     local out = vim.fn.system("defaults read -g AppleInterfaceStyle 2>/dev/null")
     return out:match("Dark") and "dark" or "light"
   end
-  -- Current Omarchy versions atomically `mv` the resolved theme directory into
-  -- place at ~/.config/omarchy/current/theme (a real directory, not a
-  -- symlink), so resolving its name via fs_readlink always fails and falls
-  -- back to the literal "theme" path segment. theme.name holds the actual
-  -- selected theme's name instead.
-  local theme_name_file = vim.fn.expand("~/.config/omarchy/current/theme.name")
-  if vim.fn.filereadable(theme_name_file) == 1 then
-    local name = (vim.fn.readfile(theme_name_file)[1] or ""):lower()
-    for _, pat in ipairs(light_theme_patterns) do
-      if name:match(pat) then
-        return "light"
-      end
-    end
-    return "dark"
-  end
-  local theme_link = vim.fn.expand("~/.config/omarchy/current/theme")
-  if vim.fn.isdirectory(theme_link) == 1 or vim.fn.filereadable(theme_link) == 1 then
-    local target = vim.loop.fs_readlink(theme_link) or theme_link
-    local name = vim.fn.fnamemodify(target, ":t"):lower()
-    for _, pat in ipairs(light_theme_patterns) do
-      if name:match(pat) then
-        return "light"
-      end
-    end
-    return "dark"
-  end
-  return "dark"
+  -- Linux: the freedesktop color-scheme preference (what GTK/portals read).
+  -- Set it with: gsettings set org.gnome.desktop.interface color-scheme prefer-light
+  -- 'default', 'prefer-dark', or a missing gsettings all mean dark.
+  local out = vim.fn.system("gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null")
+  return out:match("prefer%-light") and "light" or "dark"
 end
 
 function M.apply()
