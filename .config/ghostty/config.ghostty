@@ -1,0 +1,4 @@
+background-opacity = 0.75
+
+# Wallpaper colors from matugen ("?" = optional).
+config-file = ?~/.cache/wallpaper-colors/ghostty
