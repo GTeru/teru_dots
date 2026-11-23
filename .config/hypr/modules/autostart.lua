@@ -1,0 +1,7 @@
+-- See https://wiki.hypr.land/configuring/core/autostart/
+-- General autostart. Quickshell is started from modules/quickshell.lua.
+--
+-- hl.on("hyprland.start", function ()
+--   hl.exec_cmd("nm-applet")
+--   hl.exec_cmd("hyprpaper")
+-- end)
