@@ -6,6 +6,9 @@ Personal dotfiles, managed with [GNU Stow](https://www.gnu.org/software/stow/).
 | --------------------- | ----------------------- | ---------------------------------- |
 | `.config/nvim/`       | `~/.config/nvim`        | LazyVim-based Neovim config        |
 | `.oh-my-zsh/custom/`  | `~/.oh-my-zsh/custom`   | oh-my-zsh aliases, plugins, themes |
+| `.config/hypr/`       | `~/.config/hypr`        | Hyprland (Lua config, split into `modules/`) |
+| `.config/quickshell/` | `~/.config/quickshell`  | Quickshell status bar              |
+| `.config/matugen/`    | `~/.config/matugen`     | Wallpaper colors for Ghostty and Hyprland borders |
 | `.claude/`            | `~/.claude/*`           | Claude Code `settings.json` + `hooks/notify.sh` (file-level links) |
 
 ## How it works
@@ -19,14 +22,24 @@ The repo mirrors the layout of `$HOME`. Stow creates symlinks in your home direc
 
 Because the configs are symlinks, editing a file in the repo changes the live config right away. Commit and push the repo to keep it in sync across machines.
 
-Files that only belong to the repo (`README.md`, `CLAUDE.md`, `LICENSE`, `.githooks/`, …) are listed in `.stow-local-ignore`, so they never get linked into `$HOME`.
+Files that only belong to the repo (`README.md`, `CLAUDE.md`, `.claude/`, `LICENSE`, `.githooks/`, …) are listed in `.stow-local-ignore`, so they never get linked into `$HOME`.
 
 ## Setup on a new machine
+
+### Quick setup (Arch Linux)
+
+```sh
+git clone https://github.com/GTeru/teru_dots.git ~/teru_dots
+~/teru_dots/install.sh --dry-run   # preview
+~/teru_dots/install.sh
+```
+
+The script installs the pacman packages, installs oh-my-zsh, moves anything in the way to `~/.dotfiles-backup/<timestamp>/`, runs stow, enables the git hooks, and sets zsh as the login shell. It's safe to re-run. Use `--no-packages` to skip pacman. The steps below do the same by hand.
 
 ### 1. Install dependencies
 
 ```sh
-# Omarchy / Arch
+# Arch
 sudo pacman -S git stow zsh eza starship
 
 # macOS
@@ -36,6 +49,8 @@ brew install git stow zsh eza starship
 Starship is the prompt (config in `.config/starship.toml`). On other Linux distros: `curl -sS https://starship.rs/install.sh | sh`
 
 Install [oh-my-zsh](https://ohmyz.sh/#install) first. This repo only provides its `custom/` folder.
+
+For Hyprland + Quickshell: `sudo pacman -S hyprland quickshell curl noto-fonts-emoji matugen` (the bar's weather uses `curl`, its icon needs an emoji font, `matugen` makes the bar, Ghostty and border colors from the wallpaper). The Hyprland config starts the bar at login.
 
 For Neovim's own dependencies (ripgrep, fd, Nerd Font, mise, …), see [`.config/nvim/README.md`](.config/nvim/README.md).
 
@@ -65,6 +80,7 @@ A fresh oh-my-zsh install creates its own `~/.oh-my-zsh/custom/`, so that one wi
 ```sh
 mv ~/.oh-my-zsh/custom ~/.oh-my-zsh/custom.bak
 mv ~/.config/nvim ~/.config/nvim.bak   # only if you already had an nvim config
+mv ~/.config/hypr ~/.config/hypr.bak   # a fresh Hyprland install creates a default config
 ```
 
 ### 4. Create the symlinks
