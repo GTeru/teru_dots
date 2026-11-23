@@ -1,3 +1,7 @@
 # oh-my-zsh itself is not tracked, only its custom/ dir
 /.oh-my-zsh/*
 !/.oh-my-zsh/custom
+
+# Wallpapers are per machine; only the folder's README is tracked
+/.config/quickshell/wallpapers/*
+!/.config/quickshell/wallpapers/README.md

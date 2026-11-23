@@ -1,0 +1,56 @@
+---
+paths:
+  - ".config/quickshell/**"
+---
+
+# Quickshell (`.config/quickshell/`)
+
+A personal [Quickshell](https://quickshell.outfoxxed.me) config (Quickshell 0.3.2, Qt 6 / QML): a per-monitor top bar for Hyprland. Hyprland details, including dispatch syntax, are in `hyprland.md`.
+
+## Running
+
+The user keeps `qs` running; don't start another instance. Quickshell hot-reloads when files change, so edits show up on their own. Check results with `qs log` (the running instance's log) and `qs ipc show` (IPC targets). It opens real layer-shell windows and can't be checked headlessly.
+
+`shell.qml` is the `default` config, so subdirectories are not treated as named configs.
+
+Always start it as plain `qs`, never `qs -p <repo path>`. To restart it, suggest `pkill -x qs; hyprctl dispatch 'hl.dsp.exec_cmd("qs -n")'`: an instance started from a Claude `!` command (even with `-d`) is killed when that command's shell exits. Quickshell identifies instances by config path, so an instance started from the repo path doesn't answer `qs ipc call ...` (SUPER+R rename, `bar peek`), and it keeps its state (workspace names) under a different `statePath`.
+
+## Linting / formatting
+
+```sh
+qmllint modules/bar/Bar.qml
+qmlformat -i modules/bar/Bar.qml
+```
+
+`qmllint` reports unresolved `Quickshell.*` imports unless Quickshell's QML module path is on the import path; treat those warnings as noise. `qmlls` is usually in Qt's bin dir (e.g. `/usr/lib/qt6/bin/` on Arch) and may not be on `PATH`.
+
+## Layout
+
+- `shell.qml` is the entry point. Its `//@ pragma UseQApplication` header is required for tray menus (`item.display()`); pragmas only apply on a full restart, not a hot reload. `Variants` over `Quickshell.screens` creates one `Bar` per monitor.
+- `modules/bar/` holds `Bar.qml` (the `PanelWindow`) and its widgets (`Workspaces.qml`). New widgets go here and are placed in `Bar.qml`'s `RowLayout`. Widgets get the bar's `HyprlandMonitor` passed in as a required `monitor` property.
+- `config/Theme.qml` is a `pragma Singleton` holding all colors and sizes. Use `Theme.*` in components instead of hex literals. `config/Config.qml` is the singleton for non-visual settings (workspace count).
+- `services/` holds stateful singletons (`import qs.services`). `WorkspaceNames.qml` stores bar-only workspace names, persisted with `FileView` + `JsonAdapter` at `Quickshell.statePath("workspace-names.json")`. Labels render as `N-name` only when the workspace has windows, otherwise `N`.
+- **Bar auto-hide** (`Bar.qml`): the window is transparent with `ExclusionMode.Ignore`, so it overlays windows and reserves no space. The visible `panel` slides by `y`. `mask: Region` limits input to the panel when it's shown, or to a thin `edge` strip when hidden, so clicks elsewhere pass through. It stays shown while `held || holding || hover.hovered`. Timings are in `Theme.barHideDelay` / `barRevealEdge`.
+- **What reveals the bar** lives in `services/BarReveal.qml`. `peek(monitor)` shows it for the hide delay. `hold(reason, monitor)` / `release(reason)` keep it shown, and release peeks once. Monitor is a Hyprland monitor name, `""` means all. New triggers go in its TRIGGERS section as `Connections` blocks; don't add ad-hoc reveal logic to `Bar.qml`. External scripts and keybinds can use `qs ipc call bar peek`.
+- The center has `DateButton` (`ddd dd MMM`) and `Clock` (`HH:mm:ss t`: seconds and zone abbreviation; `BarText` uses tabular digits so it doesn't wobble), then `WeatherIndicator`. `DateButton` opens `CalendarPopup`: a 6×7 month grid starting on `Qt.locale().firstDayOfWeek`, with ‹ › (`NavButton`) or the wheel to change month, the title to jump back, and today filled with `Theme.accent` / `Theme.onAccent`. `Clock`'s `ClockPopup` shows a 3-column grid of analog `ClockFace`s, sorted by UTC offset with the latest first. QML `Date` has no timezone support, so it shells out to `TZ=<zone> date` on open, each minute while open, and when the zones change. Clicking a clock swaps the grid for a search field + `ListView` over `timedatectl list-timezones` (Enter picks the first match, Down moves into the list, Escape goes back without closing). Zones live in `services/WorldClocks.qml`: `Config.worldClocks` is the default, and a swap saves the list to `statePath("world-clocks.json")` (an empty list means the defaults).
+- `services/Weather.qml` polls wttr.in with `curl` via `Process` every 15 min. Location comes from IP, units are metric. The center of the bar (`DateButton`, `Clock`, `WeatherIndicator`) is a `Row` anchored to the window, outside the left/right `RowLayout`, so it stays truly centered.
+- **Right side** (`Bar.qml`): icon buttons, each a `BarButton` with its popup declared inside it: `MediaButton`, `NetworkButton`, `BluetoothButton`, `VolumeButton` (scroll ±5%), `BatteryButton`, `ThemeButton`, then `Tray` last (native app menus, no popup; icons collapsed behind a `<` toggle that slides them out). Icons are emoji/Unicode (no Nerd Font dependency).
+- **Popups** (`modules/popups/`): `PopupPanel` is a `PopupWindow` anchored under its button with `grabFocus` (outside click or Escape closes). Content goes in its `ColumnLayout`, built from `PopupRow`, `PopupToggle`, `PopupSlider`, `PopupButton`, `PopupLabel`, `PopupDivider`. Controls only emit signals (`toggled`, `moved`, `clicked`); bind their state to the real service. `services/Popups.qml` tracks the single open popup: `toggle(id, monitor)` (user click: interactive, grabs input) and `peek(id, monitor)` (`peeking`: no grab, auto-closes after `Config.popupPeekDuration` unless hovered, never replaces a user-opened popup). Peek triggers (volume/mute, Mpris play-pause/track change) live in its TRIGGERS section, like BarReveal's. BarReveal holds the bar while one is open. `services/Media.qml` picks the shown Mpris player. `transient` is a reserved word in QML, so don't use it as a property name. IPC: `qs ipc call popup toggle <id>`. Open/close is animated through `PopupPanel.progress` (0..1, `Theme.popupAnimDuration`); the window keeps its full size and only its contents move. `Popups.switching` makes the old panel hide instantly when switching, since Wayland allows one grabbing popup at a time.
+- `modules/common/BarText.qml` is the shared text style, in its own module so `bar` and `popups` don't import each other. `services/BatteryInfo.qml` holds battery state shared by the button and popup. Pipewire nodes need a `PwObjectTracker` before their `audio` properties are populated.
+- Widgets that handle the wheel use a `MouseArea` `onWheel` with `wheel.accepted = true`, which stops the bar-wide `WheelHandler` (workspace switching). `BarButton` only does this with `handlesWheel: true`.
+- **Wallpaper**: `modules/wallpaper/WallpaperWindow.qml` is a `PanelWindow` on `WlrLayer.Background` per screen (namespace `quickshell-wallpaper`), crossfading between two `Image`s. `services/Wallpaper.qml` lists `wallpapers/` (git-ignored except its README, per machine) with `FolderListModel` and saves the choice to `statePath("wallpaper.json")`; empty means the first image, or a gradient when the folder is empty. IPC `wallpaper next|prev|set <file>|get`; SUPER+SHIFT+W is next (`hypr/modules/quickshell.lua`).
+- **Wallpaper colors**: `services/WallpaperColors.qml` runs `matugen image <wallpaper> --dry-run --json hex` (`--mode` from `ColorMode`, scheme `Config.paletteScheme`) whenever `Wallpaper.current` or the mode changes and writes the flattened color map (`surface`, `primary`, ...) into `Theme.scheme`. Theme's colors bind to it with `pick(name, tokyoNightFallback)` and `Behavior` fades of `wallpaperFadeDuration`. It pushes into Theme rather than Theme importing `qs.services`, since services import `qs.config` (cycle). `shell.qml` calls `WallpaperColors.refresh()` on start, which also instantiates the singleton. The same matugen run renders `.config/matugen` templates (Ghostty, Hyprland borders; see `matugen.md`). IPC `palette refresh|get`. Not named `Palette`: that's a QtQuick type and wins name lookup.
+- **Light/dark mode**: `services/ColorMode.qml` uses the GNOME `color-scheme` gsetting as the source of truth (`prefer-light` → light, else dark; same rule as nvim's `util/theme.lua`). It reads it on start, watches it with `gsettings monitor`, and writes it on toggle, so nvim and GTK apps follow too. It pushes `Theme.dark`; Theme's `pick(name, dark, light)` fallbacks and `good`/`warn`/`critical` have both variants. Toggle: `ThemeButton` (🌙/☀️, before `Tray`; a `BarButton` without `popupId`, which emits `clicked`), or IPC `theme toggle|set <light|dark>|get`.
+- A new module directory is only picked up on a reload that happens after it exists. If `module "qs.modules.x" is not installed` appears right after creating one, save a file again before assuming it's broken.
+- Inline `component`s failed with "X is not a type" in `ClockPopup` (a `PopupPanel`, whose content is a default-property alias), even simple ones; they work in `WallpaperWindow`. Prefer a separate file or plain repeated properties.
+- **Name clashes:** a component in `modules/` must not share a name with a singleton in `services/` or `config/`. If they do, `Foo {}` resolves to the singleton and fails with "Composite Singleton Type Foo is not creatable". That's why the widget is `WeatherIndicator`, not `Weather`.
+- Renaming: SUPER+R runs `qs ipc call workspaces rename`, which goes to the `IpcHandler` in `shell.qml`. That sets `WorkspaceNames.editingId`, the matching pill swaps to a `TextInput`, and that bar takes exclusive layer-shell keyboard focus until Enter or Escape.
+- Imports are root-relative module paths: `import qs.config`, `import qs.modules.bar`. A new directory becomes importable as `qs.<path>`.
+
+## Conventions
+
+- Top-level bars are `PanelWindow`s anchored to screen edges (`anchors.top/left/right: true`) with `implicitHeight` setting the bar thickness.
+- Hyprland state comes from the `Quickshell.Hyprland` singleton: `Hyprland.workspaces.values` (an ObjectModel, so read it through `.values`), `Hyprland.focusedWorkspace`, and `Hyprland.dispatch(...)` for actions, e.g. `` Hyprland.dispatch(`hl.dsp.focus({ workspace = ${id} })`) ``.
+- Inside popups, hover/track backgrounds use `Theme.popupHover`, not `bgHover`. Light popups use `surface_dim` (not white), so `bgHover` would be lighter than the popup. Don't make `popupBg` darker than `surface_dim` in light mode, or `primary` text drops below 4.5:1.
+- Secondary text uses `Theme.textMuted` (`on_surface_variant`, ~9:1 or better on popup backgrounds). `Theme.fgMuted` (`outline_variant`) is only ~2:1, so keep it for non-text or deliberately faint bar states (empty workspaces, clock ticks, off icons).
+- Colors are defined in `config/Theme.qml`: wallpaper-driven via `Theme.scheme` (see **Wallpaper colors**), with Tokyo Night fallbacks. `good`/`warn`/`critical` don't follow the wallpaper, only light/dark.
