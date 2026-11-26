@@ -7,6 +7,7 @@ import QtQuick
 import qs.modules.bar
 import qs.modules.wallpaper
 import qs.modules.notifications
+import qs.modules.launcher
 import qs.config
 import qs.services
 
@@ -31,6 +32,20 @@ ShellRoot {
     Variants {
         model: Quickshell.screens
         NotificationToasts {}
+    }
+
+    // App launcher, shown on the monitor it was opened on (services/Launcher.qml).
+    Variants {
+        model: Quickshell.screens
+        LauncherWindow {}
+    }
+
+    // `qs ipc call launcher toggle|open|close` (SUPER+space in Hyprland).
+    IpcHandler {
+        target: "launcher"
+        function toggle(): void { Launcher.toggle(); }
+        function open(): void { Launcher.show(); }
+        function close(): void { Launcher.close(); }
     }
 
     // `qs ipc call workspaces rename` → rename the focused workspace (bound in Hyprland).

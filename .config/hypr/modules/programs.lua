@@ -2,5 +2,5 @@
 return {
     terminal    = "ghostty",
     fileManager = "dolphin",
-    menu        = "wofi --show drun",
+    menu        = "qs ipc call launcher toggle",   -- Quickshell app launcher (services/Launcher.qml)
 }

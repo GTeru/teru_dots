@@ -18,7 +18,7 @@ PKGS=(
   # base + shell
   git stow zsh eza starship curl wget unzip
   # desktop: Hyprland, bar, terminal, programs used by keybinds (hypr/modules/)
-  hyprland xdg-desktop-portal-hyprland polkit quickshell ghostty wofi dolphin
+  hyprland xdg-desktop-portal-hyprland polkit quickshell ghostty dolphin
   pipewire pipewire-pulse wireplumber brightnessctl playerctl wl-clipboard
   # fonts: emoji (bar weather icon), Nerd Font (nvim icons)
   noto-fonts-emoji ttf-firacode-nerd

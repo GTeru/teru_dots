@@ -68,5 +68,14 @@ Singleton {
     readonly property int toastWidth: 360
     readonly property int notificationHistoryHeight: 480   // max; scrolls past this
 
+    // App launcher (modules/launcher/).
+    readonly property int launcherWidth: 560
+    readonly property int launcherRadius: 14
+    readonly property int launcherFontSize: 18     // search field
+    readonly property int launcherRowHeight: 48
+    readonly property int launcherIconSize: 32
+    readonly property int launcherMaxRows: 8       // scrolls past this
+    readonly property real launcherDim: 0.35       // backdrop opacity
+
     readonly property int wallpaperFadeDuration: 800   // crossfade when the wallpaper changes
 }
