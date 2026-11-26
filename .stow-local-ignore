@@ -7,6 +7,6 @@
 ^/\.stow-local-ignore$
 ^/README.*
 ^/CLAUDE\.md$
-^/\.claude$
+^/\.claude/rules$
 ^/install\.sh$
 ^/LICENSE.*
