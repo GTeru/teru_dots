@@ -13,3 +13,6 @@ require("modules.keybinds")
 require("modules.rules")       -- window / layer rules
 require("modules.autostart")
 require("modules.quickshell")  -- Quickshell bar autostart
+
+-- hyprmon: managed monitor profile include
+require("hyprmon")

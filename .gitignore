@@ -5,3 +5,6 @@
 # Wallpapers are per machine; only the folder's README is tracked
 /.config/quickshell/wallpapers/*
 !/.config/quickshell/wallpapers/README.md
+
+# HyprMon backs up hyprland.lua each time it writes monitors
+/.config/hypr/hyprland.lua.bak.*
