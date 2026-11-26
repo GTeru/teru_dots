@@ -55,7 +55,8 @@ PopupPanel {
             required property var modelData
             readonly property bool secured: modelData.security !== WifiSecurityType.Open
             text: modelData.name
-            detail: `${modelData.stateChanging ? "…  " : ""}${secured ? "🔒 " : ""}${root.bars(modelData.signalStrength)}`
+            detailIcon: secured ? Icons.lock : ""
+            detail: `${modelData.stateChanging ? "…  " : ""}${root.bars(modelData.signalStrength)}`
             active: modelData.connected
             onClicked: {
                 if (modelData.connected)

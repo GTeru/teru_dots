@@ -54,6 +54,7 @@ Singleton {
     readonly property int animDuration: 120
 
     readonly property int fontSize: 13
+    readonly property int iconSize: 16         // config/Icons.qml glyphs (modules/common/IconText.qml)
     readonly property int widgetSpacing: 4     // gap between right-side buttons
     readonly property int trayIconSize: 16
 

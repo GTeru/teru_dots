@@ -11,7 +11,7 @@ PopupPanel {
     implicitWidth: Theme.toastWidth
 
     PopupToggle {
-        text: "🔕 Do not disturb"
+        text: "Do not disturb"
         checked: Notifications.dnd
         onToggled: Notifications.toggleDnd()
     }

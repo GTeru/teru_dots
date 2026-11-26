@@ -2,11 +2,11 @@ import QtQuick
 import qs.config
 import qs.modules.common
 
-// Round icon button for popups (media controls, mute). Set `enabled: false`
-// to grey it out.
+// Round icon button for popups (media controls, mute). `icon` is a glyph from
+// config/Icons.qml. Set `enabled: false` to grey it out.
 Rectangle {
     id: root
-    property alias label: text.text
+    property alias icon: glyph.text
 
     signal clicked()
 
@@ -22,10 +22,10 @@ Rectangle {
     Behavior on opacity { NumberAnimation { duration: Theme.animDuration } }
     Behavior on scale { NumberAnimation { duration: Theme.animDuration; easing.type: Easing.OutBack } }
 
-    BarText {
-        id: text
+    IconText {
+        id: glyph
         anchors.centerIn: parent
-        font.pixelSize: 16
+        font.pixelSize: 20
     }
 
     MouseArea {

@@ -6,12 +6,14 @@ import qs.modules.common
 // Small bar button that toggles a popup (see modules/popups/). Highlighted
 // while its popup is open. Declare the popup inside the button, with
 // `anchorItem: <button id>`. Without a `popupId` it just emits `clicked`.
+// Shows `icon` (a glyph from config/Icons.qml) and/or `label` text, both in `labelColor`.
 Rectangle {
     id: root
     required property var monitor          // HyprlandMonitor of the bar
     property string popupId: ""
+    property string icon: ""
     property alias label: text.text
-    property alias labelColor: text.color
+    property color labelColor: Theme.text
     // Set to true and handle `scrolled` to use the wheel; otherwise scrolling
     // falls through to the bar (workspace switching).
     property bool handlesWheel: false
@@ -21,7 +23,7 @@ Rectangle {
     signal scrolled(int delta)
     signal clicked()
 
-    implicitWidth: text.implicitWidth + 14
+    implicitWidth: content.implicitWidth + 14
     implicitHeight: 22
     radius: 11
     color: open || mouse.containsMouse ? Theme.bgHover : "transparent"
@@ -38,9 +40,23 @@ Rectangle {
         Behavior on width { NumberAnimation { duration: Theme.popupAnimDuration; easing.type: Easing.OutCubic } }
     }
 
-    BarText {
-        id: text
+    Row {
+        id: content
         anchors.centerIn: parent
+        spacing: 4
+
+        IconText {
+            anchors.verticalCenter: parent.verticalCenter
+            visible: root.icon !== ""
+            text: root.icon
+            color: root.labelColor
+        }
+        BarText {
+            id: text
+            anchors.verticalCenter: parent.verticalCenter
+            visible: root.label !== ""
+            color: root.labelColor
+        }
     }
 
     MouseArea {

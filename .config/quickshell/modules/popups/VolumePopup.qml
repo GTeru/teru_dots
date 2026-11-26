@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell.Services.Pipewire
+import qs.config
 
 // Sound: speaker and mic volume, plus the output device list.
 PopupPanel {
@@ -13,7 +14,7 @@ PopupPanel {
     VolumeRow { node: Pipewire.defaultAudioSink }
 
     PopupLabel { text: "Microphone"; visible: Pipewire.defaultAudioSource !== null }
-    VolumeRow { node: Pipewire.defaultAudioSource; icon: "🎙️"; mutedIcon: "🔇" }
+    VolumeRow { node: Pipewire.defaultAudioSource; icon: Icons.microphone; mutedIcon: Icons.microphoneOff }
 
     PopupDivider { visible: root.sinks.length > 1 }
     PopupLabel { text: "Output device"; visible: root.sinks.length > 1 }

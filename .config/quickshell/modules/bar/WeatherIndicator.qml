@@ -1,13 +1,27 @@
 import QtQuick
 import qs.config
 import qs.services
+import qs.modules.common
 
-// Weather icon + temperature, e.g. "🌦️ 28°C". Click to refresh.
-Text {
+// Weather icon + temperature, e.g. "28°C" after a rain cloud. Click to refresh.
+Item {
     visible: Weather.ready
-    text: `${Weather.icon} ${Weather.temperature}`
-    color: Theme.text
-    font { pixelSize: 13; bold: true }
+    implicitWidth: row.implicitWidth
+    implicitHeight: row.implicitHeight
+
+    Row {
+        id: row
+        spacing: 4
+
+        IconText {
+            anchors.verticalCenter: parent.verticalCenter
+            text: Weather.icon
+        }
+        BarText {
+            anchors.verticalCenter: parent.verticalCenter
+            text: Weather.temperature
+        }
+    }
 
     MouseArea {
         anchors.fill: parent

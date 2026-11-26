@@ -93,11 +93,11 @@ Rectangle {
                     radius: 9
                     color: close.containsMouse ? Qt.rgba(Theme.text.r, Theme.text.g, Theme.text.b, 0.12) : "transparent"
 
-                    BarText {
+                    IconText {
                         anchors.centerIn: parent
-                        text: "✕"
+                        text: Icons.close
                         color: Theme.textMuted
-                        font.pixelSize: 10
+                        font.pixelSize: 13
                     }
 
                     MouseArea {

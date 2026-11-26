@@ -8,8 +8,8 @@ import qs.modules.common
 RowLayout {
     id: root
     required property var node
-    property string icon: "🔊"
-    property string mutedIcon: "🔇"
+    property string icon: Icons.volumeHigh
+    property string mutedIcon: Icons.volumeOff
     readonly property var audio: node?.audio ?? null
 
     // Pipewire only fills in a node's audio properties while something tracks it.
@@ -22,7 +22,7 @@ RowLayout {
     PopupButton {
         implicitWidth: 28
         implicitHeight: 28
-        label: root.audio?.muted ? root.mutedIcon : root.icon
+        icon: root.audio?.muted ? root.mutedIcon : root.icon
         onClicked: root.audio.muted = !root.audio.muted
     }
 

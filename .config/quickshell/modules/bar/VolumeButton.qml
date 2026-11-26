@@ -13,7 +13,7 @@ BarButton {
     PwObjectTracker { objects: [Pipewire.defaultAudioSink] }
 
     visible: audio !== null
-    label: audio?.muted ? "🔇" : volume === 0 ? "🔈" : volume < 0.5 ? "🔉" : "🔊"
+    icon: audio?.muted ? Icons.volumeOff : volume === 0 ? Icons.volumeLow : volume < 0.5 ? Icons.volumeMedium : Icons.volumeHigh
 
     handlesWheel: true
     // Capped at 100%, like the volume keys (wpctl -l 1).

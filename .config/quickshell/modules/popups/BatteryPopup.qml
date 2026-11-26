@@ -34,7 +34,8 @@ PopupPanel {
 
         PopupRow {
             required property int modelData
-            text: ["🍃 Power saver", "⚖️ Balanced", "🚀 Performance"][modelData]
+            icon: [Icons.leaf, Icons.scaleBalance, Icons.rocketLaunch][modelData]
+            text: ["Power saver", "Balanced", "Performance"][modelData]
             active: PowerProfiles.profile === modelData
             onClicked: PowerProfiles.profile = modelData
         }

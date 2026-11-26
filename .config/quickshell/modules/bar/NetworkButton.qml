@@ -3,7 +3,7 @@ import Quickshell.Networking
 import qs.config
 import qs.modules.popups
 
-// Network icon: 🌐 wired, 📶 Wi-Fi, 📵 offline / Wi-Fi off. Click: Wi-Fi popup.
+// Network icon: wired, Wi-Fi, or Wi-Fi off when offline. Click: Wi-Fi popup.
 BarButton {
     id: root
     popupId: "network"
@@ -11,7 +11,7 @@ BarButton {
     readonly property bool wired: devices.some(d => d.type === DeviceType.Wired && d.connected)
     readonly property bool wifi: devices.some(d => d.type === DeviceType.Wifi && d.connected)
 
-    label: wired ? "🌐" : wifi ? "📶" : "📵"
+    icon: wired ? Icons.lan : wifi ? Icons.wifi : Icons.wifiOff
     labelColor: wired || wifi ? Theme.text : Theme.fgMuted
 
     NetworkPopup {

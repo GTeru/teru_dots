@@ -39,7 +39,8 @@ PanelWindow {
     // No input while it fades out, so clicks reach the windows below.
     mask: Region { item: root.shown ? backdrop : null }
 
-    readonly property var results: Launcher.search(search.text)
+    // Empty while hidden, so the closed launchers don't create rows and load icons.
+    readonly property var results: visible ? Launcher.search(search.text) : []
 
     // Last pointer position over a row (window coordinates), so only a real
     // pointer move selects a row, not rows scrolling under a still pointer.
@@ -150,12 +151,12 @@ PanelWindow {
                 width: parent.width
                 height: 44
 
-                Text {
+                IconText {
                     id: glyph
                     anchors { left: parent.left; leftMargin: 10; verticalCenter: parent.verticalCenter }
-                    text: "🔍"
-                    font.pixelSize: 16
-                    opacity: 0.7
+                    text: Icons.magnify
+                    color: Theme.textMuted
+                    font.pixelSize: 20
                 }
 
                 TextInput {
@@ -222,7 +223,9 @@ PanelWindow {
                         IconImage {
                             anchors.fill: parent
                             visible: row.iconUrl !== ""
-                            source: row.iconUrl
+                            // Only once sized: an SVG loaded at size 0 renders at its
+                            // natural size, which is huge for some icons ("buffer size is too big").
+                            source: width > 0 ? row.iconUrl : ""
                             asynchronous: true
                         }
 

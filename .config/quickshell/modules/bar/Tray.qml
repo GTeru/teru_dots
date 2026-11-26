@@ -5,7 +5,7 @@ import Quickshell.Widgets
 import qs.config
 import qs.modules.common
 
-// App tray icons (StatusNotifierItem), collapsed behind a "<" toggle at the far
+// App tray icons (StatusNotifierItem), collapsed behind a chevron toggle at the far
 // right of the bar. Clicking the toggle slides the icons out to its left.
 // Left click on an icon activates the app, right click opens its menu, scroll is
 // passed to the app. Not named SystemTray, which is the service singleton.
@@ -76,10 +76,10 @@ Row {
 
         Behavior on color { ColorAnimation { duration: Theme.animDuration } }
 
-        BarText {
+        IconText {
             id: arrow
             anchors.centerIn: parent
-            text: "<"
+            text: Icons.chevronLeft
             rotation: root.expanded ? 180 : 0
 
             Behavior on rotation { NumberAnimation { duration: Theme.popupAnimDuration; easing.type: Easing.OutCubic } }

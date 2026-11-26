@@ -49,17 +49,17 @@ PopupPanel {
         spacing: 12
 
         PopupButton {
-            label: "⏮"
+            icon: Icons.skipPrevious
             enabled: root.player?.canGoPrevious ?? false
             onClicked: root.player.previous()
         }
         PopupButton {
-            label: root.player?.isPlaying ? "⏸" : "▶"
+            icon: root.player?.isPlaying ? Icons.pause : Icons.play
             enabled: root.player?.canTogglePlaying ?? false
             onClicked: root.player.togglePlaying()
         }
         PopupButton {
-            label: "⏭"
+            icon: Icons.skipNext
             enabled: root.player?.canGoNext ?? false
             onClicked: root.player.next()
         }

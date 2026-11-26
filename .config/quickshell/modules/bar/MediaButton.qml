@@ -3,7 +3,7 @@ import qs.config
 import qs.services
 import qs.modules.popups
 
-// "🎵" while something is playing (muted when paused). Click: media popup.
+// Music note while something is playing (muted when paused). Click: media popup.
 // Hidden when no player is open.
 BarButton {
     id: root
@@ -11,7 +11,7 @@ BarButton {
     readonly property var player: Media.player
 
     visible: player !== null
-    label: "🎵"
+    icon: Icons.music
     labelColor: player?.isPlaying ? Theme.text : Theme.fgMuted
     opacity: player?.isPlaying ? 1 : 0.6
 
