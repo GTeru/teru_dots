@@ -6,8 +6,8 @@ import Quickshell.Hyprland
 import QtQuick
 import qs.config
 
-// Bar-only workspace names, renamed at runtime and saved across restarts in
-// ~/.local/state/quickshell/by-shell/<id>/workspace-names.json (Quickshell.statePath).
+// Bar-only workspace names, renamed at runtime. Saved in $XDG_RUNTIME_DIR (tmpfs),
+// so they survive `qs` restarts but are cleared on reboot or full logout.
 // Hyprland still knows workspaces by number. Without a custom name, an occupied
 // workspace is labelled with the app of its last-focused window (see appOf).
 Singleton {
@@ -88,7 +88,7 @@ Singleton {
     }
 
     FileView {
-        path: Quickshell.statePath("workspace-names.json")
+        path: `${Quickshell.env("XDG_RUNTIME_DIR")}/quickshell-workspace-names.json`
         watchChanges: true
         onFileChanged: reload()
         onAdapterUpdated: writeAdapter()
