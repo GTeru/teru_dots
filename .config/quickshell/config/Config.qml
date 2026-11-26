@@ -24,6 +24,11 @@ Singleton {
     // saved by services/WorldClocks.qml and override this list.
     readonly property var worldClocks: ["America/Los_Angeles", "America/New_York", "UTC", "Europe/London", "Asia/Tokyo", "Australia/Sydney"]
 
+    // Notification toasts: how long one stays up (ms, unless the app asks for
+    // another timeout; critical ones stay until closed), and how many at once.
+    readonly property int notificationTimeout: 5000
+    readonly property int notificationMaxToasts: 4
+
     // matugen --type, e.g. scheme-tonal-spot, scheme-vibrant, scheme-expressive.
     readonly property string paletteScheme: "scheme-tonal-spot"
 }

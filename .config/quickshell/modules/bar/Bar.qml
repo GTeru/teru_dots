@@ -119,6 +119,7 @@ PanelWindow {
                 BluetoothButton { monitor: bar.monitor }
                 VolumeButton { monitor: bar.monitor }
                 BatteryButton { monitor: bar.monitor }
+                NotificationButton { monitor: bar.monitor }
                 ThemeButton { monitor: bar.monitor }
                 Tray {}
             }

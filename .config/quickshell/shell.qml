@@ -6,6 +6,7 @@ import Quickshell.Io
 import QtQuick
 import qs.modules.bar
 import qs.modules.wallpaper
+import qs.modules.notifications
 import qs.config
 import qs.services
 
@@ -26,13 +27,19 @@ ShellRoot {
         Bar {}
     }
 
+    // Notification toasts, shown on the focused monitor (services/Notifications.qml).
+    Variants {
+        model: Quickshell.screens
+        NotificationToasts {}
+    }
+
     // `qs ipc call workspaces rename` → rename the focused workspace (bound in Hyprland).
     IpcHandler {
         target: "workspaces"
         function rename(): void { WorkspaceNames.startRename(); }
     }
 
-    // `qs ipc call popup toggle <volume|network|bluetooth|battery|media|clock|calendar>` → toggle a
+    // `qs ipc call popup toggle <volume|network|bluetooth|battery|media|notifications|clock|calendar>` → toggle a
     // bar popup on the focused monitor. `qs ipc call popup close` closes it.
     IpcHandler {
         target: "popup"
@@ -62,6 +69,15 @@ ShellRoot {
         function toggle(): void { ColorMode.toggle(); }
         function set(mode: string): void { ColorMode.set(mode); }
         function get(): string { return ColorMode.dark ? "dark" : "light"; }
+    }
+
+    // `qs ipc call notifications dnd|set-dnd <true|false>|clear|count`
+    IpcHandler {
+        target: "notifications"
+        function dnd(): void { Notifications.toggleDnd(); }
+        function setDnd(on: bool): void { Notifications.setDnd(on); }
+        function clear(): void { Notifications.clearAll(); }
+        function count(): int { return Notifications.count; }
     }
 
     // `qs ipc call bar peek` → show the bar briefly on the focused monitor.

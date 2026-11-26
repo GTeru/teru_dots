@@ -64,5 +64,9 @@ Singleton {
     readonly property int popupRadius: 10
     readonly property int popupAnimDuration: 260   // open; close runs at 60%
 
+    // Notification toasts (modules/notifications/) and the history popup.
+    readonly property int toastWidth: 360
+    readonly property int notificationHistoryHeight: 480   // max; scrolls past this
+
     readonly property int wallpaperFadeDuration: 800   // crossfade when the wallpaper changes
 }
