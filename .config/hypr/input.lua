@@ -1,1 +1,0 @@
-../../teru_dots/.config/hypr/input.lua
