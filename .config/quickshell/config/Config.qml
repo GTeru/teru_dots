@@ -9,6 +9,9 @@ Singleton {
     // Number of workspace pills shown in the bar (1..workspaceCount).
     readonly property int workspaceCount: 9
 
+    // Longest app name shown on a workspace pill without a custom name (then "…").
+    readonly property int workspaceAppNameMax: 12
+
     // Terminal used by bar click actions (keep in sync with hypr/modules/programs.lua).
     readonly property string terminal: "ghostty"
 

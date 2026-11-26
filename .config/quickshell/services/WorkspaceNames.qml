@@ -4,15 +4,21 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
 import QtQuick
+import qs.config
 
 // Bar-only workspace names, renamed at runtime and saved across restarts in
 // ~/.local/state/quickshell/by-shell/<id>/workspace-names.json (Quickshell.statePath).
-// Hyprland still knows workspaces by number.
+// Hyprland still knows workspaces by number. Without a custom name, an occupied
+// workspace is labelled with the app of its last-focused window (see appOf).
 Singleton {
     id: root
 
     // Workspace currently being renamed in the bar, or -1.
     property int editingId: -1
+
+    // Last-focused window per workspace: { "<workspace id>": "<toplevel address>" }.
+    // Not saved; after a restart it falls back to the first window until one is focused.
+    property var lastFocused: ({})
 
     // Rename the focused workspace (bound to a Hyprland key via `qs ipc call workspaces rename`).
     function startRename() {
@@ -39,10 +45,37 @@ Singleton {
         return adapter.names[id] ?? "";
     }
 
-    // "1-web" when the workspace has windows and a name, otherwise just "1".
+    // Short app name for a workspace's last-focused window (else its first one),
+    // from the Wayland app id: "com.mitchellh.ghostty" → "ghostty". "" when empty.
+    function appOf(id) {
+        const ws = Hyprland.workspaces.values.find(w => w.id === id);
+        const windows = ws?.toplevels?.values ?? [];
+        if (windows.length === 0)
+            return "";
+        const win = windows.find(t => t.address === lastFocused[id]) ?? windows[0];
+        const appId = win.wayland?.appId || win.lastIpcObject?.class || "";
+        const short = appId.split(".").pop().toLowerCase();
+        return short.length > Config.workspaceAppNameMax ? short.slice(0, Config.workspaceAppNameMax - 1) + "…" : short;
+    }
+
+    // Occupied: "1-web" with a custom name, else "1-ghostty" from its app. Empty: "1".
     function label(id, occupied) {
-        const name = nameOf(id);
-        return occupied && name ? `${id}-${name}` : String(id);
+        if (!occupied)
+            return String(id);
+        const name = nameOf(id) || appOf(id);
+        return name ? `${id}-${name}` : String(id);
+    }
+
+    // Remember which window was focused last on each workspace.
+    Connections {
+        target: Hyprland
+        function onActiveToplevelChanged() {
+            const t = Hyprland.activeToplevel;
+            const ws = t?.workspace?.id;
+            if (ws === undefined || root.lastFocused[ws] === t.address)
+                return;
+            root.lastFocused = Object.assign({}, root.lastFocused, { [ws]: t.address });
+        }
     }
 
     // Stop editing if focus moves to another workspace mid-rename.
