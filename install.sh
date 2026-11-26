@@ -24,6 +24,8 @@ PKGS=(
   noto-fonts-emoji ttf-firacode-nerd
   # .webp wallpapers, wallpaper colors
   qt6-imageformats matugen
+  # Claude Code notify hook (.claude/hooks/notify.sh): session titles, notify-send fallback
+  jq libnotify
   # neovim + its tools (.config/nvim/README.md)
   neovim base-devel ripgrep fd lazygit mise tree-sitter-cli python-pipx
 )

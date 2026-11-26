@@ -26,6 +26,17 @@ hl.window_rule({
     no_focus = true,
 })
 
+hl.window_rule({
+    -- Let Ghostty take focus when it asks to (xdg-activation). Clicking a
+    -- notification Ghostty sent (e.g. the Claude hook, .claude/hooks/notify.sh)
+    -- makes it present that tab; without this Hyprland only marks it urgent.
+    -- Only for Ghostty, so other apps can't steal focus.
+    name  = "ghostty-focus-on-activate",
+    match = { class = "^com\\.mitchellh\\.ghostty$" },
+
+    focus_on_activate = true,
+})
+
 -- Layer rules also return a handle.
 -- local overlayLayerRule = hl.layer_rule({
 --     name  = "no-anim-overlay",
