@@ -31,6 +31,10 @@ Singleton {
     // another timeout; critical ones stay until closed), and how many at once.
     readonly property int notificationTimeout: 5000
     readonly property int notificationMaxToasts: 4
+    // Toasts whose app name or summary starts with one of these stay up until
+    // clicked or closed. "Claude Code" covers the Claude hook (.claude/hooks/notify.sh):
+    // Ghostty sends it with no app name and "Claude Code · <session>" as the summary.
+    readonly property var notificationSticky: ["Claude Code"]
 
     // matugen --type, e.g. scheme-tonal-spot, scheme-vibrant, scheme-expressive.
     readonly property string paletteScheme: "scheme-tonal-spot"

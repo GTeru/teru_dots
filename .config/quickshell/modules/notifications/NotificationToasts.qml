@@ -33,17 +33,28 @@ PanelWindow {
     WlrLayershell.namespace: "quickshell-notifications"
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 
-    mask: Region { item: stack }
+    mask: Region { item: hitArea }
 
     // Tracks the whole stack: hover pauses every toast's timeout.
     HoverHandler {
         onHoveredChanged: Notifications.toastsHovered = hovered
     }
 
+    // Only the toasts take clicks; the rest of the window passes them through.
+    Item {
+        id: hitArea
+        width: parent.width
+        height: stack.contentHeight
+    }
+
+    // Bottom-to-top content sits at the bottom of the view, so the view keeps the
+    // window's height and is shifted up by the empty space. (height: contentHeight
+    // is a binding loop with BottomToTop.)
     ListView {
         id: stack
         width: parent.width
-        height: contentHeight
+        height: parent.height
+        y: contentHeight - height
         interactive: false
         // Newest (last in the model) on top.
         verticalLayoutDirection: ListView.BottomToTop
@@ -67,6 +78,7 @@ PanelWindow {
             NotificationCard {
                 id: card
                 notif: slot.modelData
+                toast: true
                 width: parent.width
                 height: implicitHeight
                 x: slot.shown && slot.entered ? 0 : parent.width + 20

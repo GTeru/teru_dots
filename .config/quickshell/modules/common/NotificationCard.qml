@@ -12,18 +12,21 @@ Rectangle {
     id: root
     required property var notif
     property int bodyLines: 4
+    // Shown as a toast (not in the history popup): clicking closes it.
+    property bool toast: false
 
     readonly property bool critical: notif?.urgency === NotificationUrgency.Critical
     readonly property var defaultAction: notif?.actions.find(a => a.identifier === "default") ?? null
+    // Ghostty (and other GNotification apps) send no app name; use the desktop entry's.
+    readonly property string appLabel: notif?.appName || DesktopEntries.byId(notif?.desktopEntry ?? "")?.name || ""
     readonly property var otherActions: notif?.actions.filter(a => a.identifier !== "default") ?? []
 
     function iconSource() {
         if (!notif)
             return "";
-        if (notif.image !== "")
-            return notif.image;
-        const icon = notif.appIcon !== "" ? notif.appIcon : notif.desktopEntry;
-        if (icon === "")
+        // image can be a path, a URL or an icon name (Ghostty sends "com.mitchellh.ghostty").
+        const icon = notif.image || notif.appIcon || notif.desktopEntry;
+        if (!icon)
             return "";
         if (icon.startsWith("/"))
             return "file://" + icon;
@@ -37,10 +40,18 @@ Rectangle {
     color: Theme.popupBg
     border.color: critical ? Theme.critical : Theme.popupBorder
 
+    // Click: run the app's default action (e.g. focus its window) if it has one.
+    // A toast also closes, staying in the history; the history card stays put.
     MouseArea {
         anchors.fill: parent
-        cursorShape: root.defaultAction ? Qt.PointingHandCursor : Qt.ArrowCursor
-        onClicked: if (root.defaultAction) root.defaultAction.invoke()
+        cursorShape: root.defaultAction || root.toast ? Qt.PointingHandCursor : Qt.ArrowCursor
+        onClicked: {
+            const id = root.notif?.id;
+            if (root.defaultAction)
+                root.defaultAction.invoke();
+            if (root.toast && id !== undefined)
+                Notifications.dropToast(id);
+        }
     }
 
     RowLayout {
@@ -69,7 +80,7 @@ Rectangle {
 
                 BarText {
                     Layout.fillWidth: true
-                    text: [root.notif?.appName ?? "", Notifications.ago(root.notif?.id ?? -1)].filter(s => s !== "").join(" · ")
+                    text: [root.appLabel, Notifications.ago(root.notif?.id ?? -1)].filter(s => s !== "").join(" · ")
                     color: Theme.textMuted
                     font { pixelSize: 11; bold: false }
                     elide: Text.ElideRight

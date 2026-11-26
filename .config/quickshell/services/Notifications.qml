@@ -10,7 +10,8 @@ import qs.config
 // Every notification is kept (`tracked`) until dismissed: that's the history in
 // the bar's notification popup. New ones also show as a toast
 // (modules/notifications/NotificationToasts.qml) for Config.notificationTimeout,
-// unless do-not-disturb is on. Critical ones always toast and stay until closed.
+// unless do-not-disturb is on. Critical ones always toast and stay until closed;
+// ones matching Config.notificationSticky stay too (but respect do-not-disturb).
 //
 // Toast state lives here, not in the toast windows, so every monitor's window
 // agrees on it. `toasts` maps notification id → expiry time (ms, 0 = sticky).
@@ -33,6 +34,11 @@ Singleton {
     function toggleDnd() { adapter.dnd = !adapter.dnd; }
 
     function isToast(id) { return toasts[id] !== undefined; }
+
+    // Stays up until clicked or closed (see Config.notificationSticky).
+    function isSticky(n) {
+        return Config.notificationSticky.some(p => n.appName.startsWith(p) || n.summary.startsWith(p));
+    }
 
     function find(id) {
         return server.trackedNotifications.values.find(n => n.id === id) ?? null;
@@ -89,8 +95,9 @@ Singleton {
                 return;
             // expireTimeout is in seconds; <= 0 means "server default".
             const ms = n.expireTimeout > 0 ? Math.max(2000, n.expireTimeout * 1000) : Config.notificationTimeout;
-            const t = Object.assign({}, root.toasts, { [id]: critical ? 0 : Date.now() + ms });
-            // Too many on screen: drop the oldest non-critical ones.
+            const sticky = critical || root.isSticky(n);
+            const t = Object.assign({}, root.toasts, { [id]: sticky ? 0 : Date.now() + ms });
+            // Too many on screen: drop the oldest non-sticky ones.
             const ids = Object.keys(t).map(Number).sort((a, b) => a - b);
             for (let i = 0; ids.length - i > Config.notificationMaxToasts && i < ids.length; i++)
                 if (t[ids[i]] !== 0)
