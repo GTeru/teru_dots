@@ -6,6 +6,7 @@ Personal dotfiles, managed with [GNU Stow](https://www.gnu.org/software/stow/).
 | --------------------- | ----------------------- | ---------------------------------- |
 | `.config/nvim/`       | `~/.config/nvim`        | LazyVim-based Neovim config        |
 | `.oh-my-zsh/custom/`  | `~/.oh-my-zsh/custom`   | oh-my-zsh aliases, plugins, themes |
+| `.claude/`            | `~/.claude/*`           | Claude Code `settings.json` + `hooks/notify.sh` (file-level links) |
 
 ## How it works
 

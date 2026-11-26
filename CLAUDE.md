@@ -8,6 +8,7 @@ Personal dotfiles. Directories mirror their location under `$HOME` and are wired
 
 - `~/.config/nvim` → `teru_dots/.config/nvim` (whole directory)
 - `~/.oh-my-zsh/custom` → `teru_dots/.oh-my-zsh/custom` (only the `custom/` dir; oh-my-zsh itself is not tracked)
+- `~/.claude/settings.json` and `~/.claude/hooks/notify.sh` → `teru_dots/.claude/...` (file-level links only; `~/.claude` is mostly runtime state and must never be tracked). Keep employer/machine-specific plugins (e.g. `bcgx-deck`) out of this `settings.json`: install them with `claude plugin install <name> --scope local` inside the relevant project. User-scope plugin installs write through the symlink into the repo, so check `git diff` after installing.
 
 The links are managed with GNU Stow: run `stow .` from the repo root, and `stow -R .` after adding a config. Edits here take effect immediately. Repo-only files at the root must be listed in `.stow-local-ignore`, or they get linked into `$HOME`. This matters most for `CLAUDE.md`, because `~/CLAUDE.md` would apply to every Claude session under home. Setup steps are in `README.md`.
 

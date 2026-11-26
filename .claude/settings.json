@@ -1,0 +1,56 @@
+{
+  "model": "opus[1m]",
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"$(ls -d ~/.claude/plugins/cache/caveman/caveman/*/src/hooks/caveman-statusline.sh | sort -V | tail -1)\""
+  },
+  "enabledPlugins": {
+    "caveman@caveman": true,
+    "gopls-lsp@claude-plugins-official": true,
+    "postman@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
+      }
+    },
+    "mattpocock": {
+      "source": {
+        "source": "github",
+        "repo": "mattpocock/skills"
+      }
+    }
+  },
+  "effortLevel": "xhigh",
+  "modelSettings": {
+    "claude-sonnet-5": {
+      "effortLevel": "medium"
+    }
+  },
+  "theme": "auto",
+  "autoCompactEnabled": true,
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notify.sh \"Claude finished\""
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notify.sh \"Claude needs you\""
+          }
+        ]
+      }
+    ]
+  }
+}
